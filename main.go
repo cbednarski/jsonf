@@ -21,17 +21,18 @@ const (
 const helpText = `jsonf - A simple JSON formatter
 
 When invoked on a single file, the file will be reformatted and the output sent
-to stdout. You may rewrite the original file using the -w flag.
+to stdout. You may rewrite the original file(s) using the -w flag.
 
 When invoked on a directory, the program will only operate on files ending in
-.json.
+.json. To operate on multiple files without the json extension, specify each one
+as an additional argument.
 
 When processing multiple files the program will output the filename of each file
 before it is processed, and will attempt to continue when it encouters errors.
 
 Usage:
 
-  jsonf [options] filename
+  jsonf [options] filename filename filename
   jsonf [options] directory
 
 Example:
