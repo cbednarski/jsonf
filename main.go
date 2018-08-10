@@ -51,7 +51,7 @@ Options:
   -h  Show help
 
 Copyright 2018 Chris Bednarski <chris@cbednarski.com> - MIT License
-Copyright 2009 the Go Authors - BSD License https://golang.org/LICENSE
+Portions copyright 2009 the Go Authors - BSD License https://golang.org/LICENSE
 
 Report issues to https://github.com/cbednarski/jsonf
 `
