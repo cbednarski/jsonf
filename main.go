@@ -50,6 +50,9 @@ Options:
   -c  Compact (minify) rather than indent. -c wins over -i if both are specified
   -h  Show help
 
+Copyright 2018 Chris Bednarski <chris@cbednarski.com> - MIT License
+Copyright 2009 the Go Authors - BSD License https://golang.org/LICENSE
+
 Report issues to https://github.com/cbednarski/jsonf
 `
 
