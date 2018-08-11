@@ -27,19 +27,20 @@ When invoked on a directory, the program will only operate on files ending in
 .json. To operate on multiple files without the json extension, specify each one
 as an additional argument.
 
-When processing multiple files the program will output the filename of each file
-before it is processed, and will attempt to continue when it encouters errors.
+When processing multiple files or one or more directories, the program will
+output the filename of each file before it is processed, and will attempt to
+continue when it encouters errors.
 
 Usage:
 
-  jsonf [options] filename filename filename
-  jsonf [options] directory
+  jsonf [options] filename or directory ...
 
 Example:
 
   jsonf -i sss myfile.json    Indent using 3 spaces and write to stdout
   jsonf -w -i t myfile.json   Indent using tabs and rewrite the original files
   jsonf -w .                  Rewrite all .json files in the current directory
+  jsonf -r file1 file2 dir    Rewrite file1, file2, and all .json files under dir
 
 Options:
 
@@ -156,7 +157,11 @@ func isDir(path string) bool {
 	return info.IsDir()
 }
 
-func formatPath(path, indent string, replace, recurse bool) error {
+func header(filename string) {
+	fmt.Printf("--- %s\n", filename)
+}
+
+func formatPath(path, indent string, replace, recurse, headers bool) error {
 	if isDir(path) {
 		files, err := listJSONFiles(flag.Args()[0], recurse)
 		if err != nil {
@@ -164,7 +169,7 @@ func formatPath(path, indent string, replace, recurse bool) error {
 		}
 		errors := 0
 		for _, f := range files {
-			fmt.Println(f)
+			header(f)
 			if err := formatFile(f, indent, replace); err != nil {
 				printError(err)
 			}
@@ -173,6 +178,9 @@ func formatPath(path, indent string, replace, recurse bool) error {
 			return fmt.Errorf("Encountered %d errors in %s", errors, path)
 		}
 	} else {
+		if headers {
+			header(path)
+		}
 		if err := formatFile(path, indent, replace); err != nil {
 			return err
 		}
@@ -202,8 +210,13 @@ func wrappedMain() error {
 		return errors.New(helpText)
 	}
 
+	headers := false
+	if len(flag.Args()) > 1 {
+		headers = true
+	}
+
 	for _, path := range flag.Args() {
-		if err := formatPath(path, *indent, *replace, *recurse); err != nil {
+		if err := formatPath(path, *indent, *replace, *recurse, headers); err != nil {
 			printError(err)
 		}
 	}
