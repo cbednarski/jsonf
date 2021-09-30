@@ -71,7 +71,13 @@ func printError(err error) {
 func format(filename string, indent string) (*bytes.Buffer, error) {
 	output := &bytes.Buffer{}
 
-	input, err := ioutil.ReadFile(filename)
+	var input []byte
+	var err error
+	if filename == "-" {
+		input, err = ioutil.ReadAll(os.Stdin)
+	} else {
+		input, err = ioutil.ReadFile(filename)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +232,7 @@ func wrappedMain() error {
 
 func main() {
 	if err := wrappedMain(); err != nil {
-		stderr.WriteString(fmt.Sprintf("%s\n", err))
+		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
 	os.Exit(exitCode)
