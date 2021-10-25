@@ -14,8 +14,8 @@ import (
 
 const (
 	formatCompact = "c"
-	formatString = "s"
-	formatTab = "t"
+	formatString  = "s"
+	formatTab     = "t"
 )
 
 const helpText = `jsonf - A simple JSON formatter
@@ -59,8 +59,8 @@ Report issues to https://github.com/cbednarski/jsonf
 
 var (
 	exitCode = 0
-	stdout = os.Stdout
-	stderr = os.Stderr
+	stdout   = os.Stdout
+	stderr   = os.Stderr
 )
 
 func printError(err error) {
@@ -84,15 +84,33 @@ func format(filename string, indent string) (*bytes.Buffer, error) {
 
 	input = bytes.TrimSpace(input)
 
-	if indent == formatCompact {
-		if err := json.Compact(output, input); err != nil {
-			return nil, err
+	// chunk JSON when there is a linebreak between JSON objects.
+	// there is a better way to do this, but here we are.
+	chunks := bytes.Split(input, []byte("}\n{"))
+
+	for i, chunk := range chunks {
+		// We split off some characters so we need to put them back now.
+		if len(chunks) > 1 {
+			if i == 0 {
+				chunk = append(chunk, []byte("}")...)
+			} else if i == len(chunks)-1 {
+				chunk = append([]byte("{"), chunk...)
+			} else {
+				chunk = append([]byte("{"), chunk...)
+				chunk = append(chunk, []byte("}")...)
+			}
 		}
-	} else {
-		if err := json.Indent(output, input, "", indent); err != nil {
-			return nil, err
+
+		if indent == formatCompact {
+			if err := json.Compact(output, chunk); err != nil {
+				return nil, err
+			}
+		} else {
+			if err := json.Indent(output, chunk, "", indent); err != nil {
+				return nil, err
+			}
+			output.WriteString("\n")
 		}
-		output.WriteString("\n")
 	}
 
 	return output, nil
@@ -135,7 +153,7 @@ func indentString(input string) string {
 func listJSONFiles(path string, recurse bool) ([]string, error) {
 	files := []string{}
 	if isDir(path) {
-		filepath.Walk(path, func(innerPath string, info os.FileInfo, err error) error{
+		filepath.Walk(path, func(innerPath string, info os.FileInfo, err error) error {
 			// We always want to talk the current directory, but not any
 			// subdirectories, unless recurse is true.
 			if !recurse && info.IsDir() && innerPath != path {
