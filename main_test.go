@@ -40,26 +40,26 @@ var expectedFormatCompact = `{"icecream":["chocolate","strawberry","vanilla"]}`
 
 type FormatTest struct {
 	InputFile string
-	Indent string
-	Expected string
+	Indent    string
+	Expected  string
 }
 
 func TestFormat(t *testing.T) {
 	inputs := map[string]FormatTest{
 		"spaces": {
 			InputFile: filepath.Join("test-fixtures", "icecream.json"),
-			Indent: "  ",
-			Expected: expectedFormatSpaces,
+			Indent:    "  ",
+			Expected:  expectedFormatSpaces,
 		},
 		"tabs": {
 			InputFile: filepath.Join("test-fixtures", "icecream.json"),
-			Indent: "\t",
-			Expected: expectedFormatTabs,
+			Indent:    "\t",
+			Expected:  expectedFormatTabs,
 		},
 		"compact": {
 			InputFile: filepath.Join("test-fixtures", "icecream.json"),
-			Indent: formatCompact,
-			Expected: expectedFormatCompact,
+			Indent:    formatCompact,
+			Expected:  expectedFormatCompact,
 		},
 	}
 
